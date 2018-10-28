@@ -3,15 +3,27 @@ import { GraphQLServer } from 'graphql-yoga';
 // GraphQL Type Definitions (schema)
 const typeDefs = `
   type Query {
-    hello: String!
+    post: Post!
+  }
+
+  type Post {
+    id: ID!
+    title: String!
+    body: String!
+    published: Boolean!
   }
 `;
 
 // GraphQL Resolvers
 const resolvers = {
   Query: {
-    hello() {
-      return 'Hello';
+    post() {
+      return {
+        id: '123ABD',
+        title: 'Southern Culture on the Skids',
+        body: 'Love this band',
+        published: false
+      };
     }
   }
 };
