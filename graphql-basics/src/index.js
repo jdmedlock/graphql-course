@@ -22,17 +22,20 @@ const posts = [{
   id: '1',
   title: 'Last day on current gig',
   body: 'Just finished my current contracting gig yesterday and am looking for the next one!',
-  published: true
+  published: true,
+  author: '1'
 }, {
   id: '2',
   title: 'Anyone have a Cannondale bike for sale',
   body: 'Looking for a reasonably priced Cannondate trail bike in good condition.',
-  published: true
+  published: true,
+  author: '2'
 }, {
   id: '3',
   title: 'My posts are sooooo boring',
   body: 'I just fell asleep reading my own posts!',
-  published: false
+  published: false,
+  author: '3'
 }];
 
 // GraphQL Type Definitions (schema)
@@ -49,6 +52,7 @@ const typeDefs = `
     title: String!
     body: String!
     published: Boolean!
+    author: User!
   }
 
   type User {
@@ -56,6 +60,7 @@ const typeDefs = `
     name: String!
     email: String!
     age: Int
+    posts: [Post!]!
   }
 `;
 
@@ -92,6 +97,20 @@ const resolvers = {
       }
       return users.filter(user => {
         return user.name.toLowerCase().includes(args.query.toLowerCase());
+      });
+    }
+  },
+  Post: {
+    author(parent, args, ctx, info) {
+      return users.find(user => {
+        return user.id === parent.author;
+      });
+    }
+  },
+  User: {
+    posts(parent, args, ctx, info) {
+      return posts.filter(post => {
+        return post.author === parent.id;
       });
     }
   }
