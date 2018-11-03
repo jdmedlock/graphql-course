@@ -17,12 +17,31 @@ const users = [{
   email: 'kay@me.com'
 }];
 
+// Test data - Posts
+const posts = [{
+  id: '1',
+  title: 'Last day on current gig',
+  body: 'Just finished my current contracting gig yesterday and am looking for the next one!',
+  published: true
+}, {
+  id: '2',
+  title: 'Anyone have a Cannondale bike for sale',
+  body: 'Looking for a reasonably priced Cannondate trail bike in good condition.',
+  published: true
+}, {
+  id: '3',
+  title: 'My posts are sooooo boring',
+  body: 'I just fell asleep reading my own posts!',
+  published: false
+}];
+
 // GraphQL Type Definitions (schema)
 const typeDefs = `
   type Query {
     me: User!
     post: Post!
-    users: [User!]!
+    posts(query: String): [Post!]!
+    users(query: String): [User!]!
   }
 
   type Post {
@@ -50,16 +69,30 @@ const resolvers = {
         email: 'jdoe@me.com',
       };
     },
+
     post() {
-      return {
-        id: '123ABD',
-        title: 'Southern Culture on the Skids',
-        body: 'Love this band',
-        published: false
-      };
+      return posts[0];
     },
+
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return posts;
+      }
+      return posts.filter(post => {
+        return (
+          post.title.toLowerCase().includes(args.query.toLowerCase()) ||
+          post.body.toLowerCase().includes(args.query.toLowerCase())
+        );
+      });
+    },
+
     users(parent, args, ctx, info) {
-      return users;
+      if (!args.query) {
+        return users;
+      }
+      return users.filter(user => {
+        return user.name.toLowerCase().includes(args.query.toLowerCase());
+      });
     }
   }
 };
