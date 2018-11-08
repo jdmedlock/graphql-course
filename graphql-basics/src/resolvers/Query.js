@@ -7,11 +7,11 @@ const Query = {
     };
   },
 
-  comments() {
+  comments(parent, args, { db }, info) {
     return db.comments;
   },
 
-  post() {
+  post(parent, args, { db }, info) {
     return db.posts[0];
   },
 
