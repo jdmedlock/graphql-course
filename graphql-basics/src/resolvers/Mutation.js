@@ -2,7 +2,7 @@ import uuidv4 from 'uuid/v4';
 
 const Mutation = {
   // Comment Mutations
-  createComment(parent, args, { db }, info) {
+  createComment(parent, args, { db, pubsub }, info) {
     const authorExists = db.users.some(user => user.id === args.data.author);
     if (!authorExists) {
       throw new Error('Author user id not found');
@@ -19,7 +19,9 @@ const Mutation = {
       id: uuidv4(),
       ...args.data
     };
+
     db.comments.push(comment);
+    pubsub.publish(`comment:${args.data.post}`, { comment: comment });
     return comment;
   },
   updateComment(parent, args, { db }, info) {
